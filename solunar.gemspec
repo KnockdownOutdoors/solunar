@@ -11,7 +11,6 @@ s = Gem::Specification.new 'solunar', '0.0.1' do |s|
   # naturally you must include the extension source in the gem
 
   s.files = %w[
-    Rakefile
     ext/solunar/extconf.rb
     ext/solunar/solunar.c
     ext/solunar/astrocon.h
