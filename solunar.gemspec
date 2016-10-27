@@ -29,5 +29,23 @@ s = Gem::Specification.new 'solunar', '0.0.3' do |s|
     ext/solunar/Source_Files/ilum_2024.txt
     ext/solunar/Source_Files/ilum_2025.txt
     ext/solunar/Source_Files/ilum_2026.txt
+    data/DST_Files/Test.txt
+    data/DST_Files/USA.txt
+    data/Data_Files/Test.bin
+    data/Data_Files/USA.bin
+    data/Source_Files/Moon.txt
+    data/Source_Files/Sun.txt
+    data/Source_Files/Phase.TXT
+    data/Source_Files/ilum_2016.txt
+    data/Source_Files/ilum_2017.txt
+    data/Source_Files/ilum_2018.txt
+    data/Source_Files/ilum_2019.txt
+    data/Source_Files/ilum_2020.txt
+    data/Source_Files/ilum_2021.txt
+    data/Source_Files/ilum_2022.txt
+    data/Source_Files/ilum_2023.txt
+    data/Source_Files/ilum_2024.txt
+    data/Source_Files/ilum_2025.txt
+    data/Source_Files/ilum_2026.txt
   ]
 end

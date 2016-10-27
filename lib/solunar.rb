@@ -6,16 +6,19 @@ class Solunar
   end
 
   def test
-  	get_data("2017-05-01",200,29.2108,-81.0228,-5,1,0)
+  	get_data("2017-05-01",10,29.2108,-81.0228,-5,1,0)
   end
 
   def get_data(date,count,lat,lon,tz_offset_hours,dst_offset_hours,military_time)
   	forecast = Array.new
   	res = generate(date,count,lat,lon,(tz_offset_hours*-60.0).to_i,(dst_offset_hours*60.0).to_i,military_time)
+  	dir = "#{Gem.dir}/gems/solunar-#{Solunar::VERSION}/data"
+  	puts `ls #{dir}`
   	#Most data comes from the "generate" function, which lives in solunar.c
   	#Major feed times are currently defined as two hours starting at the moon underfoot and moon transit
   	#Minor feed times are one hour after moon rise and moon set
   	res.split(";").each do |line|
+  		next unless line.split(",").length > 7
   		puts line
   		segments = line.split(",")
   		day = Hash.new

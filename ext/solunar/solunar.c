@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 /***********************   macro definitions   **************************************************/
 
@@ -19,23 +20,23 @@
 #define DATA_EXT        ".bin"
 #define DST_NAME        "USA"
 #define DST_EXT         ".txt"
-#define DATA_PATH       "./ext/solunar/Data_Files/"
-#define CLUB_PATH       "./ext/solunar/Club_Files/"
-#define DST_PATH        "./ext/solunar/DST_Files/"
-#define SUN_FILE        "./ext/solunar/Source_Files/sun.txt"
-#define MOON_FILE       "./ext/solunar/Source_Files/moon.txt"
-#define PHASE_FILE      "./ext/solunar/Source_Files/phase.txt"
-#define ILLUM_16_FILE   "./ext/solunar/Source_Files/ilum_2016.txt"
-#define ILLUM_17_FILE   "./ext/solunar/Source_Files/ilum_2017.txt"
-#define ILLUM_18_FILE   "./ext/solunar/Source_Files/ilum_2018.txt"
-#define ILLUM_19_FILE   "./ext/solunar/Source_Files/ilum_2019.txt"
-#define ILLUM_20_FILE   "./ext/solunar/Source_Files/ilum_2020.txt"
-#define ILLUM_21_FILE   "./ext/solunar/Source_Files/ilum_2021.txt"
-#define ILLUM_22_FILE   "./ext/solunar/Source_Files/ilum_2022.txt"
-#define ILLUM_23_FILE   "./ext/solunar/Source_Files/ilum_2023.txt"
-#define ILLUM_24_FILE   "./ext/solunar/Source_Files/ilum_2024.txt"
-#define ILLUM_25_FILE   "./ext/solunar/Source_Files/ilum_2025.txt"
-#define ILLUM_26_FILE   "./ext/solunar/Source_Files/ilum_2026.txt"
+#define DATA_PATH       "ext/solunar/Data_Files/"
+#define CLUB_PATH       "ext/solunar/Club_Files/"
+#define DST_PATH        "ext/solunar/DST_Files/"
+#define SUN_FILE        "ext/solunar/Source_Files/sun.txt"
+#define MOON_FILE       "ext/solunar/Source_Files/moon.txt"
+#define PHASE_FILE      "ext/solunar/Source_Files/phase.txt"
+#define ILLUM_16_FILE   "ext/solunar/Source_Files/ilum_2016.txt"
+#define ILLUM_17_FILE   "ext/solunar/Source_Files/ilum_2017.txt"
+#define ILLUM_18_FILE   "ext/solunar/Source_Files/ilum_2018.txt"
+#define ILLUM_19_FILE   "ext/solunar/Source_Files/ilum_2019.txt"
+#define ILLUM_20_FILE   "ext/solunar/Source_Files/ilum_2020.txt"
+#define ILLUM_21_FILE   "ext/solunar/Source_Files/ilum_2021.txt"
+#define ILLUM_22_FILE   "ext/solunar/Source_Files/ilum_2022.txt"
+#define ILLUM_23_FILE   "ext/solunar/Source_Files/ilum_2023.txt"
+#define ILLUM_24_FILE   "ext/solunar/Source_Files/ilum_2024.txt"
+#define ILLUM_25_FILE   "ext/solunar/Source_Files/ilum_2025.txt"
+#define ILLUM_26_FILE   "ext/solunar/Source_Files/ilum_2026.txt"
 
 #define CLUB_FAIL       1
 #define DATA_FAIL       2       
@@ -287,6 +288,16 @@ static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     char *date_str;
     char *data_name;
     VALUE ret_v;
+
+    char debugStr[1024];
+    char cwd[1024];
+
+    strcpy(debugStr,"puts 'Directory: ");
+    if (getcwd(cwd, sizeof(cwd)) != NULL){
+        strcat(debugStr,cwd);
+        strcat(debugStr,"'");
+        rb_eval_string(debugStr);
+    }
 
     club_name = "club"; //Constant, as this isn't really used for anything
     date_str = RSTRING_PTR(r_date_str);
