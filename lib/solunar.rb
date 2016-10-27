@@ -1,8 +1,8 @@
 class Solunar
 
-  VERSION = '0.0.1'
+  VERSION = '0.0.3'
   def version
-  	"0.0.1"
+  	"0.0.3"
   end
 
   def test
@@ -58,8 +58,6 @@ class Solunar
   		day[:major_feed_times] = major_feed_times
   		day[:minor_feed_times] = minor_feed_times
   		forecast<<day
-  		#2017-09-08,  8:18 pm,  2:34 am,  8:50 am,  2:33 pm, 10:22 am,  4:39 pm, 11:01 pm,  4:14 am, 240, Waning Gibbous ,         , 93%
-  		#s_ris, s_trn, s_set, s_tru, m_ris, m_trn, m_set, m_tru
   	end
   	forecast
   end

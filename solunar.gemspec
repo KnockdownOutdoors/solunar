@@ -1,15 +1,11 @@
-s = Gem::Specification.new 'solunar', '0.0.1' do |s|
+s = Gem::Specification.new 'solunar', '0.0.3' do |s|
   s.summary = 'Solunar Forecasting Gem'
-  s.authors = %w["Nathan Sullivan","Rick Dawson"]
-
-  # this tells RubyGems to build an extension upon install
-
+  s.description = 'A gem that wraps the C code from Rick Dawson that computes the sun and moon times based on date and coordinates. Takes a series of arguments, and returns a JSON of the hunting/fishing solunar forecast. While designed for hunting and fishing applications, this may be useful to other apps that need solar or lunar data.'
+  s.authors = %w["Sullivan, Nathan","Dawson, Rick"]
   s.extensions = %w[ext/solunar/extconf.rb]
   s.email = "nathan@knockdownoutdoors.com"
-  s.homepage = "https://www.knockdownoutdoors.com"
+  s.homepage = "https://github.com/KnockdownOutdoors/solunar"
   s.license = 'MIT'
-  # naturally you must include the extension source in the gem
-
   s.files = %w[
     ext/solunar/extconf.rb
     ext/solunar/solunar.c
