@@ -1,9 +1,9 @@
 class Solunar
 
   NAME = "solunar"
-  VERSION = '0.0.5'
+  VERSION = '0.0.6'
   def version
-  	"0.0.5"
+  	"0.0.6"
   end
 
   def test
@@ -32,7 +32,7 @@ class Solunar
   		moon[:rise] = segments[5].strip[0..-4] unless segments[5].strip == "NONE"
   		moon[:set] = segments[7].strip[0..-4] unless segments[7].strip == "NONE"
   		moon[:transit] = segments[6].strip[0..-4] unless segments[6].strip == "NONE"
-  		day[:under_foot] = segments[4].strip[0..-4] unless segments[4].strip == "NONE"
+  		day[:under_foot] = segments[8].strip[0..-4] unless segments[4].strip == "NONE"
   		unless moon[:rise].nil?
   			minor_feed_times << { start: moon[:rise], stop: add_hours(moon[:rise],1) }
   		end
@@ -52,8 +52,6 @@ class Solunar
   			major_feed_times.rotate!
   		end
   		day[:date] = segments[0].strip
-  		#day[:days_since_new] = "Unknown"
-  		#day[:dayscale] = "Unknown"
   		day[:moon_illumination] = segments[12].strip
   		day[:moon_phase] = segments[10].strip
   		day[:moon] = moon
