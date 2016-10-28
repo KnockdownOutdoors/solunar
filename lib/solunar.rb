@@ -1,9 +1,9 @@
 class Solunar
 
   NAME = "solunar"
-  VERSION = '0.0.6'
+  VERSION = '0.0.8'
   def version
-  	"0.0.6"
+  	"0.0.8"
   end
 
   def test
@@ -32,21 +32,21 @@ class Solunar
   		moon[:rise] = segments[5].strip[0..-4] unless segments[5].strip == "NONE"
   		moon[:set] = segments[7].strip[0..-4] unless segments[7].strip == "NONE"
   		moon[:transit] = segments[6].strip[0..-4] unless segments[6].strip == "NONE"
-  		day[:under_foot] = segments[8].strip[0..-4] unless segments[4].strip == "NONE"
+  		day[:under_foot] = segments[8].strip[0..-4] unless segments[8].strip == "NONE"
   		unless moon[:rise].nil?
-  			minor_feed_times << { start: moon[:rise], stop: add_hours(moon[:rise],1) }
+  			minor_feed_times << { start: add_minutes(moon[:rise],-45), stop: add_minutes(moon[:rise],45) }
   		end
   		unless moon[:set].nil?
-  			minor_feed_times << { start: moon[:set], stop: add_hours(moon[:set],1) }
+  			minor_feed_times << { start: add_minutes(moon[:set],-45), stop: add_minutes(moon[:set],45) }
   		end
   		unless moon[:rise].nil? || moon[:set].nil? || moon[:rise].split(":").first.to_i < moon[:set].split(":").first.to_i
   			minor_feed_times.rotate!
   		end
   		unless moon[:transit].nil?
-  			major_feed_times << { start: moon[:transit], stop: add_hours(moon[:transit],2) }
+  			major_feed_times << { start: add_minutes(moon[:transit],-90), stop: add_minutes(moon[:transit],90) }
   		end
   		unless day[:under_foot].nil?
-  			major_feed_times << { start: day[:under_foot], stop: add_hours(day[:under_foot],2) }
+  			major_feed_times << { start: add_minutes(day[:under_foot],-90), stop: add_minutes(day[:under_foot],90) }
   		end
   		unless moon[:transit].nil? || day[:under_foot].nil? || moon[:transit].split(":").first.to_i < day[:under_foot].split(":").first.to_i
   			major_feed_times.rotate!
@@ -74,6 +74,29 @@ class Solunar
   	else
   	  return "0#{hour.to_s}:#{segs[1]}"
   	end
+  end
+
+  def add_minutes(str,num)
+    segs = str.split(":")
+    hour = segs[0].to_i
+    minutes = segs[1].to_i
+    minutes += num
+    while(minutes > 59)
+      minutes -= 60
+      hour += 1
+    end
+    while(minutes < 0)
+      minutes += 60
+      hour -= 1
+    end
+    minutes = "0".to_s + minutes.to_s if minutes < 10
+    hour += 24 if hour < 0
+    hour -= 24 if hour > 23
+    if hour > 9
+      return "#{hour.to_s}:#{minutes.to_s}"
+    else
+      return "0#{hour.to_s}:#{minutes.to_s}"
+    end
   end
 
 end
