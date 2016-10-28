@@ -26,13 +26,13 @@ class Solunar
   		moon = Hash.new
   		major_feed_times = Array.new
   		minor_feed_times = Array.new
-  		sun[:rise] = segments[1].strip unless segments[1].strip == "NONE"
-  		sun[:set] = segments[3].strip unless segments[3].strip == "NONE"
-  		sun[:transit] = segments[2].strip unless segments[2].strip == "NONE"
-  		moon[:rise] = segments[5].strip unless segments[5].strip == "NONE"
-  		moon[:set] = segments[7].strip unless segments[7].strip == "NONE"
-  		moon[:transit] = segments[6].strip unless segments[6].strip == "NONE"
-  		day[:under_foot] = segments[4].strip unless segments[4].strip == "NONE"
+  		sun[:rise] = segments[1].strip unless segments[1].strip[0..-3] == "NONE"
+  		sun[:set] = segments[3].strip unless segments[3].strip[0..-3] == "NONE"
+  		sun[:transit] = segments[2].strip unless segments[2].strip[0..-3] == "NONE"
+  		moon[:rise] = segments[5].strip unless segments[5].strip[0..-3] == "NONE"
+  		moon[:set] = segments[7].strip unless segments[7].strip[0..-3] == "NONE"
+  		moon[:transit] = segments[6].strip unless segments[6].strip[0..-3] == "NONE"
+  		day[:under_foot] = segments[4].strip unless segments[4].strip[0..-3] == "NONE"
   		unless moon[:rise].nil?
   			minor_feed_times << { start: moon[:rise], stop: add_hours(moon[:rise],1) }
   		end
