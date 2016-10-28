@@ -1,9 +1,9 @@
 class Solunar
 
   NAME = "solunar"
-  VERSION = '0.0.4'
+  VERSION = '0.0.5'
   def version
-  	"0.0.4"
+  	"0.0.5"
   end
 
   def test
@@ -26,13 +26,13 @@ class Solunar
   		moon = Hash.new
   		major_feed_times = Array.new
   		minor_feed_times = Array.new
-  		sun[:rise] = segments[1].strip unless segments[1].strip[0..-3] == "NONE"
-  		sun[:set] = segments[3].strip unless segments[3].strip[0..-3] == "NONE"
-  		sun[:transit] = segments[2].strip unless segments[2].strip[0..-3] == "NONE"
-  		moon[:rise] = segments[5].strip unless segments[5].strip[0..-3] == "NONE"
-  		moon[:set] = segments[7].strip unless segments[7].strip[0..-3] == "NONE"
-  		moon[:transit] = segments[6].strip unless segments[6].strip[0..-3] == "NONE"
-  		day[:under_foot] = segments[4].strip unless segments[4].strip[0..-3] == "NONE"
+  		sun[:rise] = segments[1].strip[0..-4] unless segments[1].strip == "NONE"
+  		sun[:set] = segments[3].strip[0..-4] unless segments[3].strip == "NONE"
+  		sun[:transit] = segments[2].strip[0..-4] unless segments[2].strip == "NONE"
+  		moon[:rise] = segments[5].strip[0..-4] unless segments[5].strip == "NONE"
+  		moon[:set] = segments[7].strip[0..-4] unless segments[7].strip == "NONE"
+  		moon[:transit] = segments[6].strip[0..-4] unless segments[6].strip == "NONE"
+  		day[:under_foot] = segments[4].strip[0..-4] unless segments[4].strip == "NONE"
   		unless moon[:rise].nil?
   			minor_feed_times << { start: moon[:rise], stop: add_hours(moon[:rise],1) }
   		end
@@ -52,8 +52,8 @@ class Solunar
   			major_feed_times.rotate!
   		end
   		day[:date] = segments[0].strip
-  		day[:days_since_new] = "Unknown"
-  		day[:dayscale] = "Unknown"
+  		#day[:days_since_new] = "Unknown"
+  		#day[:dayscale] = "Unknown"
   		day[:moon_illumination] = segments[12].strip
   		day[:moon_phase] = segments[10].strip
   		day[:moon] = moon
@@ -72,9 +72,9 @@ class Solunar
   	hour += 24 if hour < 0
   	hour -= 24 if hour > 23
   	if hour > 9
-  	  return "#{hour.to_s}:#{segs[1]}:#{segs[2]}"
+  	  return "#{hour.to_s}:#{segs[1]}"
   	else
-  	  return "0#{hour.to_s}:#{segs[1]}:#{segs[2]}"
+  	  return "0#{hour.to_s}:#{segs[1]}"
   	end
   end
 
