@@ -20,23 +20,23 @@
 #define DATA_EXT        ".bin"
 #define DST_NAME        "USA"
 #define DST_EXT         ".txt"
-#define DATA_PATH       "ext/solunar/Data_Files/"
-#define CLUB_PATH       "ext/solunar/Club_Files/"
-#define DST_PATH        "ext/solunar/DST_Files/"
-#define SUN_FILE        "ext/solunar/Source_Files/sun.txt"
-#define MOON_FILE       "ext/solunar/Source_Files/moon.txt"
-#define PHASE_FILE      "ext/solunar/Source_Files/phase.txt"
-#define ILLUM_16_FILE   "ext/solunar/Source_Files/ilum_2016.txt"
-#define ILLUM_17_FILE   "ext/solunar/Source_Files/ilum_2017.txt"
-#define ILLUM_18_FILE   "ext/solunar/Source_Files/ilum_2018.txt"
-#define ILLUM_19_FILE   "ext/solunar/Source_Files/ilum_2019.txt"
-#define ILLUM_20_FILE   "ext/solunar/Source_Files/ilum_2020.txt"
-#define ILLUM_21_FILE   "ext/solunar/Source_Files/ilum_2021.txt"
-#define ILLUM_22_FILE   "ext/solunar/Source_Files/ilum_2022.txt"
-#define ILLUM_23_FILE   "ext/solunar/Source_Files/ilum_2023.txt"
-#define ILLUM_24_FILE   "ext/solunar/Source_Files/ilum_2024.txt"
-#define ILLUM_25_FILE   "ext/solunar/Source_Files/ilum_2025.txt"
-#define ILLUM_26_FILE   "ext/solunar/Source_Files/ilum_2026.txt"
+#define DATA_PATH       "Data_Files/"
+#define CLUB_PATH       "Club_Files/"
+#define DST_PATH        "DST_Files/"
+#define SUN_FILE        "Source_Files/sun.txt"
+#define MOON_FILE       "Source_Files/moon.txt"
+#define PHASE_FILE      "Source_Files/phase.txt"
+#define ILLUM_16_FILE   "Source_Files/ilum_2016.txt"
+#define ILLUM_17_FILE   "Source_Files/ilum_2017.txt"
+#define ILLUM_18_FILE   "Source_Files/ilum_2018.txt"
+#define ILLUM_19_FILE   "Source_Files/ilum_2019.txt"
+#define ILLUM_20_FILE   "Source_Files/ilum_2020.txt"
+#define ILLUM_21_FILE   "Source_Files/ilum_2021.txt"
+#define ILLUM_22_FILE   "Source_Files/ilum_2022.txt"
+#define ILLUM_23_FILE   "Source_Files/ilum_2023.txt"
+#define ILLUM_24_FILE   "Source_Files/ilum_2024.txt"
+#define ILLUM_25_FILE   "Source_Files/ilum_2025.txt"
+#define ILLUM_26_FILE   "Source_Files/ilum_2026.txt"
 
 #define CLUB_FAIL       1
 #define DATA_FAIL       2       
@@ -197,7 +197,7 @@ int         BuildDataFile(char*);
 int         TestSummary(void);
 int         Summary(char*, double, double, int, int, int, char*);
 int         TestClubFile(void);
-char*       ClubFile(char*, char*, int, double, double, int, int, int, char*, char*);
+char*       ClubFile(char*, char*, int, double, double, int, int, int, char*, char*, char*);
 double      ConvertDate(char*);
 int         GetSunData(void);
 int         GetMoonData(void);
@@ -275,7 +275,7 @@ int main()
 #endif*/
 
 static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
-    VALUE r_lon, VALUE r_gmt_offset, VALUE r_dst_offset, VALUE r_military_time)
+    VALUE r_lon, VALUE r_gmt_offset, VALUE r_dst_offset, VALUE r_military_time, VALUE r_path)
 {
     char* result;
     int gmt_offset;
@@ -287,19 +287,16 @@ static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     char *club_name;
     char *date_str;
     char *data_name;
+    char *path;
     VALUE ret_v;
 
     char debugStr[1024];
     char cwd[1024];
 
-    strcpy(debugStr,"puts 'Directory: ");
-    if (getcwd(cwd, sizeof(cwd)) != NULL){
-        strcat(debugStr,cwd);
-        strcat(debugStr,"'");
-        rb_eval_string(debugStr);
-    }
+
 
     club_name = "club"; //Constant, as this isn't really used for anything
+    path = RSTRING_PTR(r_path);
     date_str = RSTRING_PTR(r_date_str);
     count = NUM2INT(r_count);
     lat = NUM2DBL(r_lat);
@@ -312,7 +309,7 @@ static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     outputLength = count*251;
     char output[outputLength];
     result = ClubFile(  club_name, date_str, count, lat, lon, 
-                        gmt_offset, dst_time, am_pm, data_name, output);
+                        gmt_offset, dst_time, am_pm, data_name, output, path);
     ret_v = rb_str_new2(result);
 
     return ret_v;
@@ -650,7 +647,7 @@ PARAMETERS:     name of Club File
                 name of Data File
 */
 char* ClubFile(char *club_name, char *start_date, int count, double lat, double lon,
-                int gmt_offset, int dst_time, int am_pm, char *data_name, char *output)
+                int gmt_offset, int dst_time, int am_pm, char *data_name, char *output, char *path)
 {
     FILE *file;
     int i;
@@ -668,8 +665,7 @@ char* ClubFile(char *club_name, char *start_date, int count, double lat, double 
     char m_set[10];
     char m_tru[10];
     char p_tim[10];
-    char data_filename[100];
-    char club_filename[100];
+    char data_filename[1024];
     const char phase[9][16] =
     { "*** ERROR ***  ",
         "New Moon       ",
@@ -683,15 +679,11 @@ char* ClubFile(char *club_name, char *start_date, int count, double lat, double 
 
     lat *= D2R;
     lon *= D2R;
-
-    strcpy(club_filename, CLUB_PATH);
-    strcat(club_filename, club_name);
-    strcat(club_filename, CLUB_EXT);
-    strcpy(data_filename, DATA_PATH);
+    strcpy(data_filename, path);
+    strcat(data_filename, DATA_PATH);
     strcat(data_filename, data_name);
     strcat(data_filename, DATA_EXT);
     jdate = ConvertDate(start_date);
-
     for (i = 0; i < count; i++)
     {
         success = Solunar(&solunar, jdate + i, lat, lon, gmt_offset, dst_time, data_filename);
@@ -732,7 +724,6 @@ char* ClubFile(char *club_name, char *start_date, int count, double lat, double 
             }
         }
     }
-
     return output;
 
 }
@@ -1965,6 +1956,6 @@ Init_solunar(void) {
     cSolunar = rb_const_get(rb_cObject, rb_intern("Solunar"));
 
     rb_define_method(cSolunar, "multi", test_function, 1);
-    rb_define_method(cSolunar, "generate", generate, 7);
+    rb_define_method(cSolunar, "generate", generate, 8);
 }
 
