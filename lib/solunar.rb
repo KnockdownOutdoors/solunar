@@ -1,9 +1,9 @@
 class Solunar
 
   NAME = "solunar"
-  VERSION = '0.0.9'
+  VERSION = '0.0.10'
   def version
-  	"0.0.9"
+  	"0.0.10"
   end
 
   def test
@@ -14,7 +14,6 @@ class Solunar
   	forecast = Array.new
   	dir = "#{Gem.dir}/gems/#{Solunar::NAME}-#{Solunar::VERSION}/data/"
   	res = generate(date,count,lat,lon,(tz_offset_hours*-60.0).to_i,(dst_offset_hours*60.0).to_i,military_time,dir)
-    puts "Got a result"
   	#Most data comes from the "generate" function, which lives in solunar.c
   	#Major feed times are currently defined as two hours starting at the moon underfoot and moon transit
   	#Minor feed times are one hour after moon rise and moon set

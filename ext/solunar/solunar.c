@@ -562,12 +562,9 @@ static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     int outputLength;
     outputLength = count*251;
     char output[outputLength];
-    rb_eval_string("puts 'Step 1'");
     result = ClubFile(  club_name, date_str, count, lat, lon, 
                         gmt_offset, dst_time, am_pm, data_name, output, path);
-    rb_eval_string("puts 'Step 1.5'");
     ret_v = rb_str_new2(result);
-    rb_eval_string("puts 'Step Final'");
 
     return ret_v;
 }
@@ -906,7 +903,6 @@ PARAMETERS:     name of Club File
 char* ClubFile(char *club_name, char *start_date, int count, double lat, double lon,
                 int gmt_offset, int dst_time, int am_pm, char *data_name, char *output, char *path)
 {
-    rb_eval_string("puts \"Step 2\"");
     FILE *file;
     int i;
     int n;
@@ -944,12 +940,9 @@ char* ClubFile(char *club_name, char *start_date, int count, double lat, double 
     jdate = ConvertDate(start_date);
     for (i = 0; i < count; i++)
     {
-        rb_eval_string("puts \"Step 3\"");
         success = Solunar(&solunar, jdate + i, lat, lon, gmt_offset, dst_time, data_filename);
-        rb_eval_string("puts \"Step 4\"");
         if (success == EXIT_SUCCESS)
         {
-            rb_eval_string("puts \"Step 5\"");
             FmtTimeStr(s_ris, solunar.sun.ris, am_pm);
             FmtTimeStr(s_trn, solunar.sun.trn, am_pm);
             FmtTimeStr(s_set, solunar.sun.set, am_pm);
