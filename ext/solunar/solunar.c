@@ -44,23 +44,12 @@
 #define MOON_FAIL       4   
 #define DTS_FAIL        5       
 #define PHASE_FAIL      6   
-#define ILLUM_16_FAIL   7
-#define ILLUM_17_FAIL   8
-#define ILLUM_18_FAIL   9
-#define ILLUM_19_FAIL   10
-#define ILLUM_20_FAIL   11
-#define ILLUM_21_FAIL   12
-#define ILLUM_22_FAIL   13
-#define ILLUM_23_FAIL   14
-#define ILLUM_24_FAIL   15
-#define ILLUM_25_FAIL   16
-#define ILLUM_26_FAIL   17
-#define ARG_ERROR       99
+
 //file information
-#define DATA_FILE_SIZE  4018
+#define DATA_FILE_SIZE  25933
 #define JPL_DATE_SIZE   12
-#define PHASE_FILE_SIZE 544
-#define DST_FILE_SIZE   11
+#define PHASE_FILE_SIZE 3513
+#define DST_FILE_SIZE   71
 #define RST_MAX_TRIES   50
 #define JDATE_BASE      2457388.5   // January 1, 2016
 #define YES             1
@@ -128,18 +117,78 @@ typedef struct {
 
 /***********************   constant arrays   ****************************************************/
 
-const int year_days[11] = {
-    0,      // 2016
-    366,    // 2017
-    731,    // 2018
-    1096,   // 2019
-    1461,   // 2020
-    1827,   // 2021
-    2192,   // 2022
-    2557,   // 2023
-    2922,   // 2024
-    3288,   // 2025
-    3653,   // 2026
+const int year_days[71] = {
+0,       // 1956
+366,     // 1957
+731,     // 1958
+1096,    // 1959
+1461,    // 1960
+1827,    // 1961
+2192,    // 1962
+2557,    // 1963
+2922,    // 1964
+3288,    // 1965
+3653,    // 1966
+4018,    // 1967
+4383,    // 1968
+4749,    // 1969
+5114,    // 1970
+5479,    // 1971
+5844,    // 1972
+6210,    // 1973
+6575,    // 1974
+6940,    // 1975
+7305,    // 1976
+7671,    // 1977
+8036,    // 1978
+8401,    // 1979
+8766,    // 1980
+9132,    // 1981
+9497,    // 1982
+9862,    // 1983
+10227,   // 1984
+10593,   // 1985
+10958,   // 1986
+11323,   // 1987
+11688,   // 1988
+12054,   // 1989
+12419,   // 1990
+12784,   // 1991
+13149,   // 1992
+13515,   // 1993
+13880,   // 1994
+14245,   // 1995
+14610,   // 1996
+14976,   // 1997
+15341,   // 1998
+15706,   // 1999
+16071,   // 2000
+16437,   // 2001
+16802,   // 2002
+17167,   // 2003
+17532,   // 2004
+17898,   // 2005
+18263,   // 2006
+18628,   // 2007
+18993,   // 2008
+19359,   // 2009
+19724,   // 2010
+20089,   // 2011
+20454,   // 2012
+20820,   // 2013
+21185,   // 2014
+21550,   // 2015
+21915,   // 2016
+22281,   // 2017
+22646,   // 2018
+23011,   // 2019
+23376,   // 2020
+23742,   // 2021
+24107,   // 2022
+24472,   // 2023
+24837,   // 2024
+25203,   // 2025
+25568,   // 2026
 };
 const int month_days[12] = {
     0,      // JAN
@@ -176,20 +225,266 @@ char error_msg[][36] = {
     "Cannot open Sun file",
     "Cannot open Moon file",
     "Cannot open DST file",
-    "Cannot open Phase file",
-    "Cannot open 2016 Illumination file",
-    "Cannot open 2017 Illumination file",
-    "Cannot open 2018 Illumination file",
-    "Cannot open 2019 Illumination file",
-    "Cannot open 2020 Illumination file",
-    "Cannot open 2021 Illumination file",
-    "Cannot open 2022 Illumination file",
-    "Cannot open 2023 Illumination file",
-    "Cannot open 2024 Illumination file",
-    "Cannot open 2025 Illumination file",
-    "Cannot open 2026 Illumination file"
+    "Cannot open Phase file"
 };
-
+const int illum_wax_cres[4][13][8] = {
+    {                                               // five days
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      44% first quarter                                       
+        { 3,   8,  16,  25,  35,   0,   0,   0, },  //      45% first quarter                                       
+        { 3,   8,  16,  25,  35,   0,   0,   0, },  //      46% first quarter                                       
+        { 3,   8,  16,  25,  36,   0,   0,   0, },  //      47% first quarter                                       
+        { 3,   8,  16,  25,  36,   0,   0,   0, },  //      48% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      49% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      50% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      51% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      52% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      53% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      54% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      55% first quarter                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      56% first quarter                                       
+    },
+    {                                               // six days                                                         
+        { 1,   3,   8,  15,  24,  34,   0,   0, },  //      44% first quarter
+        { 1,   3,   8,  15,  24,  34,   0,   0, },  //      45% first quarter
+        { 1,   4,  10,  17,  25,  36,   0,   0, },  //      46% first quarter
+        { 1,   5,  11,  18,  27,  36,   0,   0, },  //      47% first quarter
+        { 1,   5,  11,  18,  27,  36,   0,   0, },  //      48% first quarter
+        { 2,   6,  12,  19,  28,  39,   0,   0, },  //      49% first quarter
+        { 1,   6,  12,  20,  29,  40,   0,   0, },  //      50% first quarter
+        { 1,   6,  12,  20,  29,  40,   0,   0, },  //      51% first quarter
+        { 1,   6,  13,  21,  31,  42,   0,   0, },  //      52% first quarter
+        { 2,   6,  13,  21,  31,  42,   0,   0, },  //      53% first quarter
+        { 2,   6,  13,  21,  32,  43,   0,   0, },  //      54% first quarter
+        { 2,   6,  15,  23,  34,  44,   0,   0, },  //      55% first quarter   
+        { 3,   6,  16,  25,  36,  46,   0,   0, },  //      56% first quarter
+    },
+    {                                               // seven days                                                           
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      44% first quarter   
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      45% first quarter   
+        { 1,   3,   7,  13,  20,  28,  37,   0, },  //      46% first quarter 
+        { 1,   3,   8,  14,  21,  29,  38,   0, },  //      47% first quarter 
+        { 1,   4,   8,  14,  21,  29,  39,   0, },  //      48% first quarter 
+        { 1,   4,   8,  14,  21,  30,  39,   0, },  //      49% first quarter 
+        { 1,   4,   9,  15,  22,  31,  40,   0, },  //      50% first quarter 
+        { 2,   5,  10,  16,  24,  32,  42,   0, },  //      51% first quarter 
+        { 2,   5,  10,  17,  25,  33,  43,   0, },  //      52% first quarter 
+        { 2,   5,  10,  17,  25,  34,  43,   0, },  //      53% first quarter 
+        { 2,   5,  11,  17,  25,  34,  44,   0, },  //      54% first quarter 
+        { 2,   6,  12,  18,  26,  35,  45,   0, },  //      55% first quarter 
+        { 2,   6,  12,  18,  26,  35,  45,   0, },  //      56% first quarter 
+    },
+    {                                               // eight days                                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      44% first quarter     
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      45% first quarter     
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      46% first quarter  
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      47% first quarter  
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      48% first quarter    
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      49% first quarter    
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      50% first quarter    
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      51% first quarter    
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      52% first quarter    
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      53% first quarter    
+        { 0,   3,   6,  12,  18,  26,  35,  45, },  //      54% first quarter   
+        { 0,   3,   6,  12,  18,  26,  35,  45, },  //      55% first quarter   
+        { 0,   3,   7,  12,  19,  27,  36,  46, },  //      56% first quarter
+    },
+};
+const int illum_wax_gibb[4][13][8] = {
+    {                                               // five days
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      45% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      46% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      47% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      48% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      49% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      50% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      51% first quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      52% first quarter   
+        { 64,  75,  84,  92,  97,   0,   0,   0, }, //      53% first quarter   
+        { 65,  75,  85,  92,  97,   0,   0,   0, }, //      54% first quarter   
+        { 66,  76,  86,  93,  98,   0,   0,   0, }, //      55% first quarter   
+        { 67,  77,  86,  93,  98,   0,   0,   0, }, //      56% first quarter   
+    },
+    {                                               // six days                                                         
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% first quarter   
+        { 57,  68,  78,  87,  94,  98,   0,   0, }, //      45% first quarter   
+        { 57,  68,  78,  87,  94,  98,   0,   0, }, //      46% first quarter   
+        { 58,  69,  79,  88,  94,  98,   0,   0, }, //      47% first quarter   
+        { 59,  70,  80,  89,  95,  99,   0,   0, }, //      48% first quarter   
+        { 60,  70,  79,  87,  94,  99,   0,   0, }, //      49% first quarter   
+        { 61,  72,  82,  90,  96,  99,   0,   0, }, //      50% first quarter   
+        { 62,  72,  81,  89,  95,  99,   0,   0, }, //      51% first quarter   
+        { 63,  73,  82,  89,  94,  98,   0,   0, }, //      52% first quarter   
+        { 62,  72,  82,  89,  95,  99,   0,   0, }, //      53% first quarter   
+        { 64,  74,  82,  90,  96,  99,   0,   0, }, //      54% first quarter   
+        { 65,  75,  83,  90,  96,  99,   0,   0, }, //      55% first quarter   
+        { 66,  76,  85,  92,  95, 100,   0,   0, }, //      56% first quarter 
+    },
+    {                                               // seven days                                                           
+        { 0 ,   0,   0,   0,   0,   0,   0,   0, }, //      44% first quarter   
+        { 56,  66,  75,  83,  89,  94,  98,   0, }, //      45% first quarter   
+        { 57,  67,  76,  84,  90,  95,  99,   0, }, //      46% first quarter   
+        { 57,  67,  76,  84,  90,  95,  99,   0, }, //      47% first quarter   
+        { 58,  68,  76,  85,  91,  96,  99,   0, }, //      48% first quarter   
+        { 60,  69,  78,  86,  92,  96,  99,   0, }, //      49% first quarter   
+        { 60,  70,  78,  86,  92,  96,  99,   0, }, //      50% first quarter   
+        { 61,  71,  79,  86,  92,  96,  99,   0, }, //      51% first quarter   
+        { 63,  72,  80,  87,  93,  97,  99,   0, }, //      52% first quarter   
+        { 63,  73,  81,  88,  93,  97,  99,   0, }, //      53% first quarter   
+        { 64,  73,  81,  88,  93,  97, 100,   0, }, //      54% first quarter 
+        { 64,  74,  82,  89,  94,  98, 100,   0, }, //      55% first quarter 
+        { 66,  75,  83,  89,  94,  98, 100,   0, }, //      56% first quarter 
+    },
+    {                                               // eight days                                                       
+        { 0,   0,   0,   0,   0,   0,   0,   0, },  //      44% first quarter 
+        { 56,  66,  75,  83,  89,  95,  98, 100, }, //      45% first quarter 
+        { 56,  66,  75,  83,  89,  95,  98, 100, }, //      46% first quarter 
+        { 57,  67,  75,  83,  90,  95,  98, 100, }, //      47% first quarter 
+        { 57,  67,  75,  83,  90,  95,  98, 100, }, //      48% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      49% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      50% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      51% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      52% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      53% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      54% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      55% first quarter 
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% first quarter 
+    },
+};
+const int illum_wan_gibb[4][13][8] = {
+    {                                               // five days
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% last quarter                            
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      45% last quarter                            
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      46% last quarter                            
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      47% last quarter                            
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      48% last quarter                            
+        { 95,  89,  81,  71,  61,   0,   0,   0, }, //      49% last quarter                            
+        { 96,  90,  82,  72,  62,   0,   0,   0, }, //      50% last quarter                            
+        { 96,  91,  83,  73,  62,   0,   0,   0, }, //      51% last quarter                            
+        { 96,  90,  82,  72,  62,   0,   0,   0, }, //      52% last quarter                            
+        { 97,  92,  84,  75,  64,   0,   0,   0, }, //      53% last quarter                            
+        { 97,  92,  85,  75,  65,   0,   0,   0, }, //      54% last quarter                            
+        { 98,  93,  86,  77,  66,   0,   0,   0, }, //      55% last quarter                            
+        { 98,  93,  87,  78,  77,   0,   0,   0, }, //      56% last quarter                            
+    },
+    {                                               // six days                                                         
+        { 97,  93,  86,  77,  67,  56,   0,   0, }, //      44% last quarter    
+        { 97,  93,  86,  77,  67,  56,   0,   0, }, //      45% last quarter    
+        { 99,  95,  88,  79,  69,  58,   0,   0, }, //      46% last quarter    
+        { 99,  95,  88,  80,  70,  59,   0,   0, }, //      47% last quarter    
+        { 99,  95,  89,  80,  70,  59,   0,   0, }, //      48% last quarter    
+        { 98,  94,  89,  80,  69,  59,   0,   0, }, //      49% last quarter    
+        { 98,  94,  89,  81,  72,  61,   0,   0, }, //      50% last quarter    
+        { 99,  95,  89,  81,  71,  61,   0,   0, }, //      51% last quarter    
+        { 98,  93,  87,  79,  71,  61,   0,   0, }, //      52% last quarter    
+        { 99,  96,  91,  84,  74,  63,   0,   0, }, //      53% last quarter    
+        { 99,  96,  91,  84,  75,  65,   0,   0, }, //      54% last quarter    
+        { 99,  96,  91,  85,  75,  65,   0,   0, }, //      55% last quarter    
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter    
+    },
+    {                                               // seven days                                                           
+        { 98,  94,  89,  81,  72,  60,  53,   0, }, //      44% last quarter    
+        { 98,  94,  89,  82,  73,  61,  54,   0, }, //      45% last quarter    
+        { 98,  94,  89,  83,  73,  65,  55,   0, }, //      46% last quarter    
+        { 99,  97,  92,  86,  78,  68,  58,   0, }, //      47% last quarter    
+        { 99,  97,  92,  86,  78,  69,  59,   0, }, //      48% last quarter    
+        { 99,  95,  91,  85,  77,  69,  59,   0, }, //      49% last quarter    
+        { 99,  96,  91,  85,  78,  69,  60,   0, }, //      50% last quarter    
+        { 99,  97,  92,  85,  78,  69,  60,   0, }, //      51% last quarter    
+        { 99,  96,  92,  86,  79,  71,  62,   0, }, //      52% last quarter    
+        { 99,  97,  93,  87,  80,  72,  63,   0, }, //      53% last quarter    
+        { 99,  97,  93,  87,  80,  72,  63,   0, }, //      54% last quarter    
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      55% last quarter    
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter    
+    },
+    {                                               // eight days                                                       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% last quarter       
+        {100,  98,  94,  89,  82,  74,  66,  56, }, //      45% last quarter   
+        {100,  98,  94,  89,  82,  74,  66,  56, }, //      46% last quarter   
+        {100,  98,  94,  89,  82,  74,  66,  56, }, //      47% last quarter   
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      48% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      49% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      50% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      51% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      52% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      53% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      54% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      55% last quarter       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter       
+    },
+};
+const int illum_wan_cres[4][13][8] = {
+    {                                               // five days
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% last quarter                                                                                                                
+        { 34,  24,  15,   8,   3,   0,   0,   0, }, //      45% last quarter                                                                                                                
+        { 35,  25,  16,   8,   3,   0,   0,   0, }, //      46% last quarter                                                                                                                
+        { 36,  26,  16,   8,   3,   0,   0,   0, }, //      47% last quarter                                                                                                                
+        { 37,  26,  16,   8,   3,   0,   0,   0, }, //      48% last quarter                                                                                                                
+        { 38,  27,  17,   8,   3,   0,   0,   0, }, //      49% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      50% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      51% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      52% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      53% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      54% last quarter                                                                                                                
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      55% last quarter                                                                                                            
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter                                                                                                                    
+    },
+    {                                               // six days                                                         
+        { 33,  23,  14,   7,   3,   0,   0,   0, }, //      44% last quarter                                                                                                                            
+        { 36,  25,  17,  10,   6,   2,   0,   0, }, //      45% last quarter                                                                                                                        
+        { 36,  26,  17,  10,   5,   2,   0,   0, }, //      46% last quarter                                                                                                                        
+        { 37,  27,  18,  10,   5,   1,   0,   0, }, //      47% last quarter                                                                                                                        
+        { 37,  27,  18,  10,   5,   1,   0,   0, }, //      48% last quarter                                                                                                                        
+        { 39,  28,  19,  11,   4,   1,   0,   0, }, //      49% last quarter                                                                                                                        
+        { 39,  28,  19,  11,   4,   1,   0,   0, }, //      50% last quarter                                                                                                                        
+        { 40,  29,  19,  12,   4,   1,   0,   0, }, //      51% last quarter                                                                                                                        
+        { 42,  30,  21,  13,   8,   3,   0,   0, }, //      52% last quarter                                                                                                                        
+        { 43,  31,  22,  14,   6,   2,   0,   0, }, //      53% last quarter                                                                                                                        
+        { 44,  33,  23,  14,   6,   2,   0,   0, }, //      54% last quarter                                                                                                                        
+        { 45,  33,  24,  15,   6,   2,   0,   0, }, //      55% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter                                                                                                                    
+    },
+    {                                               // seven days                                                           
+        { 35,  26,  19,  12,   7,   3,   1,   0, }, //      44% last quarter                                                                                                                       
+        { 35,  26,  19,  12,   7,   3,   1,   0, }, //      45% last quarter                                                                                                                        
+        { 36,  27,  19,  12,   7,   3,   1,   0, }, //      46% last quarter                                                                                                                        
+        { 38,  29,  21,  14,   8,   3,   1,   0, }, //      47% last quarter                                                                                                                        
+        { 39,  30,  22,  14,   8,   4,   1,   0, }, //      48% last quarter                                                                                                                        
+        { 40,  31,  22,  15,   9,   4,   1,   0, }, //      49% last quarter                                                                                                                        
+        { 40,  31,  22,  15,   8,   3,   1,   0, }, //      50% last quarter                                                                                                                        
+        { 40,  30,  21,  14,   8,   4,   1,   0, }, //      51% last quarter                                                                                                                        
+        { 42,  33,  25,  17,  10,   5,   2,   0, }, //      52% last quarter                                                                                                                        
+        { 44,  34,  25,  17,  10,   4,   1,   0, }, //      53% last quarter                                                                                                                        
+        { 44,  35,  26,  17,  10,   5,   1,   0, }, //      54% last quarter                                                                                                                        
+        { 43,  32,  22,  14,   7,   3,   0,   0, }, //      55% last quarter                                                                                                                        
+        { 44,  35,  25,  16,  10,   5,   0,   0, }, //      56% last quarter                                                                                                                        
+    },
+    {                                               // eight days                                                       
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      44% last quarter           
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      45% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      46% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      47% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      48% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      49% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      50% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      51% last quarter                                                                                                                        
+        { 44,  34,  26,  19,  11,   6,   2,   0, }, //      52% last quarter                                                                                                                        
+        { 44,  34,  26,  19,  11,   6,   2,   0, }, //      53% last quarter                                                                                                                        
+        { 44,  34,  26,  19,  11,   6,   2,   0, }, //      54% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      55% last quarter                                                                                                                        
+        {  0,   0,   0,   0,   0,   0,   0,   0, }, //      56% last quarter                                                                                                                        
+    },
+};
+const int illum_estimates[4][24] = {                // (hours since phase time)
+    {   1,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,       // new moon
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, },
+    {  56,  56,  55,  55,  54,  54,  53,  53,  52,  52,  51,  51,       // first quarter
+       51,  50,  50,  48,  48,  48,  48,  47,  47,  47,  48,  46, },
+    {  99,  99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,       // full moon
+      100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, },
+    {  45,  45,  46,  46,  46,  47,  47,  48,  48,  49,  49,  49,       // last quarter
+       50,  50,  50,  51,  51,  52,  52,  53,  53,  54,  54,  55, },
+};
 /***********************   function prototypes   ************************************************/
 
 int         TestBuildDataFile(void);
@@ -230,49 +525,8 @@ Uuncomment one of these to control whether the executable will enter the Console
 a one cay summary, the Club Mode, to porepare the Club File, or the build Mode, to build a new
 data file from a revised DST file.                                                              */
 
-//define CONSOLE_MODE
 #define CLUB_MODE
-//#define BUILD_MODE
 
-/***********************   Main
-
-This is the entry point for the program.
-
-RETURN VALUE:   EXIT_SUCCESS or Error Code
-
-PARAMETERS:     Varies depending on mode
-*/
-/*#ifdef CONSOLE_MODE
-int main()
-{
-    enum { BUILD = 'B', CLUB = 'C', DISPLAY = 'D' };
-    int task;
-    char line[100];
-
-    printf("Enter: Club File, Display Summary, Build Data File: ");
-    fgets(line, sizeof line, stdin);
-    if (line[0] == '\n')    strcpy(line, "Club");
-    task = line[0];
-    switch (task)
-    {
-    case BUILD:
-    case BUILD + 32:
-        printf("\nBUILD DATA FILE\n\n");
-        TestBuildDataFile();
-        break;
-    case DISPLAY:
-    case DISPLAY + 32:
-        printf("\nDISPLAY SUMMARY\n\n");
-        TestSummary();
-        break;
-    default:
-        printf("\nCLUB FILE\n\n");
-        TestClubFile();
-        break;
-    }
-    return 0;
-}
-#endif*/
 
 static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     VALUE r_lon, VALUE r_gmt_offset, VALUE r_dst_offset, VALUE r_military_time, VALUE r_path)
@@ -308,9 +562,12 @@ static VALUE generate(VALUE self, VALUE r_date_str, VALUE r_count, VALUE r_lat,
     int outputLength;
     outputLength = count*251;
     char output[outputLength];
+    rb_eval_string("puts 'Step 1'");
     result = ClubFile(  club_name, date_str, count, lat, lon, 
                         gmt_offset, dst_time, am_pm, data_name, output, path);
+    rb_eval_string("puts 'Step 1.5'");
     ret_v = rb_str_new2(result);
+    rb_eval_string("puts 'Step Final'");
 
     return ret_v;
 }
@@ -649,6 +906,7 @@ PARAMETERS:     name of Club File
 char* ClubFile(char *club_name, char *start_date, int count, double lat, double lon,
                 int gmt_offset, int dst_time, int am_pm, char *data_name, char *output, char *path)
 {
+    rb_eval_string("puts \"Step 2\"");
     FILE *file;
     int i;
     int n;
@@ -686,9 +944,12 @@ char* ClubFile(char *club_name, char *start_date, int count, double lat, double 
     jdate = ConvertDate(start_date);
     for (i = 0; i < count; i++)
     {
+        rb_eval_string("puts \"Step 3\"");
         success = Solunar(&solunar, jdate + i, lat, lon, gmt_offset, dst_time, data_filename);
+        rb_eval_string("puts \"Step 4\"");
         if (success == EXIT_SUCCESS)
         {
+            rb_eval_string("puts \"Step 5\"");
             FmtTimeStr(s_ris, solunar.sun.ris, am_pm);
             FmtTimeStr(s_trn, solunar.sun.trn, am_pm);
             FmtTimeStr(s_set, solunar.sun.set, am_pm);
@@ -750,14 +1011,14 @@ double ConvertDate(char* string)
     year = atoi(string);
     month = atoi(string + 5);
     day = atoi(string + 8);
-    if ((year < 2016)   ||  (year > 2026))                              error = YES;
+    if ((year < 1956)   ||  (year > 2026))                              error = YES;
     if ((month < 1)     ||  (month > 12))                               error = YES;
     if ((day < 1)       ||  ((year % 4 == 0) && (day > l[month - 1])))  error = YES;
     if ((day < 1)       ||  ((year % 4 != 0) && (day > m[month - 1])))  error = YES;
     if (error == NO)
     {
         result =  JDATE_BASE;
-        result += year_days[year - 2016];
+        result += year_days[year - 1956];
         result += year % 4 == 0? leap_days[month - 1]: month_days[month - 1];
         result += day - 1;
     }
@@ -1040,10 +1301,119 @@ PARAMETERS:     none
 */
 int GetIllumData(void)
 {
+///past
+    enum {NEW_MOON_EST = 0, FIRST_QTR_EST = 1, FULL_MOON_EST = 2, LAST_QTR_EST = 3};
+///
     int index;
     int success;
+///past
+    int n;
+    int phase_time;
+    int time_offset;
+    int day_offset;
+    int new_moon_illum;
+    int first_qtr_illum;
+    int full_moon_illum;
+    int last_qtr_illum;
+    int new_moon_index;
+    int first_qtr_index;
+    int full_moon_index;
+    int last_qtr_index;
+    int days;
+    int index_2016;
 
+    index_2016 = year_days[2016 - 1956];
+    
+    // initial new moon illumination and index
     index = 0;
+    while (jpl_temp[index].phase != NEW_MOON) index++;
+    phase_time = jpl_temp[index].phase_time;
+    time_offset = jpl_temp[index].dst == YES ? 300 : 360;
+    day_offset = phase_time < time_offset ? 1 : 0;
+    if (day_offset == 1) phase_time += MINUTES_PER_DAY;
+    phase_time -= time_offset;
+    new_moon_index = index - day_offset;
+    phase_time = (int)((phase_time + 30) / 60);
+    new_moon_illum = illum_estimates[NEW_MOON_EST][phase_time];
+    jpl_temp[new_moon_index].illum = new_moon_illum;
+
+    while (index < index_2016)
+    {
+        // first quarter illumination and index
+        while (jpl_temp[index].phase != FIRST_QTR) index++;
+        phase_time = jpl_temp[index].phase_time;
+        time_offset = jpl_temp[index].dst == YES ? 300 : 360;
+        day_offset = phase_time < time_offset ? 1 : 0;
+        if (day_offset == 1) phase_time += MINUTES_PER_DAY;
+        phase_time -= time_offset;
+        first_qtr_index = index - day_offset;
+        phase_time = (int)((phase_time + 30) / 60);
+        first_qtr_illum = illum_estimates[FIRST_QTR_EST][phase_time];
+        jpl_temp[first_qtr_index].illum = first_qtr_illum;
+
+        // full moon illumination and index
+        while (jpl_temp[index].phase != FULL_MOON) index++;
+        phase_time = jpl_temp[index].phase_time;
+        time_offset = jpl_temp[index].dst == YES ? 300 : 360;
+        day_offset = phase_time < time_offset ? 1 : 0;
+        if (day_offset == 1) phase_time += MINUTES_PER_DAY;
+        phase_time -= time_offset;
+        full_moon_index = index - day_offset;
+        phase_time = (int)((phase_time + 30) / 60);
+        full_moon_illum = illum_estimates[FULL_MOON_EST][phase_time];
+        jpl_temp[full_moon_index].illum = full_moon_illum;
+
+        // waxing crescent illuminations
+        days = first_qtr_index - new_moon_index - 1;
+        for (n = 0; n < days; n++)
+        {
+            jpl_temp[new_moon_index + 1 + n].illum = illum_wax_cres[days - 5][first_qtr_illum - 44][n];
+        }
+        days = full_moon_index - first_qtr_index - 1;
+        for (n = 0; n < days; n++)
+        {
+            jpl_temp[first_qtr_index + 1 + n].illum = illum_wax_gibb[days - 5][first_qtr_illum - 44][n];
+        }
+
+        // last quarter illumination and index
+        while (jpl_temp[index].phase != LAST_QTR) index++;
+        phase_time = jpl_temp[index].phase_time;
+        time_offset = jpl_temp[index].dst == YES ? 300 : 360;
+        day_offset = phase_time < time_offset ? 1 : 0;
+        if (day_offset == 1) phase_time += MINUTES_PER_DAY;
+        phase_time -= time_offset;
+        last_qtr_index = index - day_offset;
+        phase_time = (int)((phase_time + 30) / 60);
+        last_qtr_illum = illum_estimates[LAST_QTR_EST][phase_time];
+        jpl_temp[last_qtr_index].illum = last_qtr_illum;
+
+        // new moon illumination and index
+        while (jpl_temp[index].phase != NEW_MOON) index++;
+        phase_time = jpl_temp[index].phase_time;
+        time_offset = jpl_temp[index].dst == YES ? 300 : 360;
+        day_offset = phase_time < time_offset ? 1 : 0;
+        if (day_offset == 1) phase_time += MINUTES_PER_DAY;
+        phase_time -= time_offset;
+        new_moon_index = index - day_offset;
+        phase_time = (int)((phase_time + 30) / 60);
+        new_moon_illum = illum_estimates[NEW_MOON_EST][phase_time];
+        jpl_temp[new_moon_index].illum = new_moon_illum;
+
+        // waning crescent illuminations
+        days = last_qtr_index - full_moon_index - 1;
+        for (n = 0; n < days; n++)
+        {
+            jpl_temp[full_moon_index + 1 + n].illum = illum_wan_gibb[days - 5][last_qtr_illum - 44][n];
+        }
+        days = new_moon_index - last_qtr_index - 1;
+        for (n = 0; n < days; n++)
+        {
+            jpl_temp[last_qtr_index + 1 + n].illum = illum_wan_cres[days - 5][last_qtr_illum - 44][n];
+        }
+    }
+//  index = 0;
+    index = index_2016;
+///
     success = EXIT_SUCCESS;
     if (success == EXIT_SUCCESS) success = GetIllumYear(ILLUM_16_FILE, &index);
     if (success == EXIT_SUCCESS) success = GetIllumYear(ILLUM_17_FILE, &index);
