@@ -43,4 +43,4 @@ The "get_data" method will print the tabular output of the calculations to the s
 and return a Ruby Hash of the data.
 
 There is a test method, called "test", that will generate a solunar forecast for Daytona Beach, FL,
-starting on May 1, 2017, for 200 days.
+starting on May 1, 2017, for 100 days.

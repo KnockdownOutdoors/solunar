@@ -1,9 +1,10 @@
 class Solunar
+  require 'time'
 
   NAME = "solunar"
-  VERSION = '0.0.10'
+  VERSION = '0.0.11'
   def version
-  	"0.0.10"
+  	"0.0.11"
   end
 
   def test
@@ -19,38 +20,80 @@ class Solunar
   	#Minor feed times are one hour after moon rise and moon set
   	res.split(";").each do |line|
   		next unless line.split(",").length > 7
+      puts line
   		segments = line.split(",")
+      iso = "%Y-%m-%dT%H:%M%:z"
+      hmt = "%H:%M"
+      tz_minutes = segments[9].to_i
+      tz_offset = tz_offset_hours >= 0 ? "+" : "-"
+      tz_offset = tz_offset + "#{double_digit(tz_minutes/60)}:#{double_digit(tz_minutes%60)}"
+      date = segments[0].strip
   		day = Hash.new
   		sun = Hash.new
   		moon = Hash.new
   		major_feed_times = Array.new
   		minor_feed_times = Array.new
-  		sun[:rise] = segments[1].strip[0..-4] unless segments[1].strip == "NONE"
-  		sun[:set] = segments[3].strip[0..-4] unless segments[3].strip == "NONE"
-  		sun[:transit] = segments[2].strip[0..-4] unless segments[2].strip == "NONE"
-  		moon[:rise] = segments[5].strip[0..-4] unless segments[5].strip == "NONE"
-  		moon[:set] = segments[7].strip[0..-4] unless segments[7].strip == "NONE"
-  		moon[:transit] = segments[6].strip[0..-4] unless segments[6].strip == "NONE"
-  		day[:under_foot] = segments[8].strip[0..-4] unless segments[8].strip == "NONE"
-  		unless moon[:rise].nil?
-  			minor_feed_times << { start: add_minutes(moon[:rise],-45), stop: add_minutes(moon[:rise],45) }
+  		sun_rise = Time.parse(date+" "+segments[1].strip[0..-4]+tz_offset) unless segments[1].strip == "NONE"
+      sun[:rise] = sun_rise.strftime(hmt) unless sun_rise.nil?
+      sun[:rise_at] = sun_rise.strftime(iso) unless sun_rise.nil?
+  		sun_set = Time.parse(date+" "+segments[3].strip[0..-4]+tz_offset) unless segments[3].strip == "NONE"
+      sun[:set] = sun_set.strftime(hmt) unless sun_set.nil?
+      sun[:set_at] = sun_set.strftime(iso) unless sun_set.nil?
+  		sun_transit = Time.parse(date+" "+segments[2].strip[0..-4]+tz_offset) unless segments[2].strip == "NONE"
+      sun[:transit] = sun_transit.strftime(hmt) unless sun_transit.nil?
+      sun[:transit_at] = sun_transit.strftime(iso) unless sun_transit.nil?
+  		moon_rise = Time.parse(date+" "+segments[5].strip[0..-4]+tz_offset) unless segments[5].strip == "NONE"
+      moon[:rise] = moon_rise.strftime(hmt) unless moon_rise.nil?
+      moon[:rise_at] = moon_rise.strftime(iso) unless moon_rise.nil?
+  		moon_set = Time.parse(date+" "+segments[7].strip[0..-4]+tz_offset) unless segments[7].strip == "NONE"
+      moon[:set] = moon_set.strftime(hmt) unless moon_set.nil?
+      moon[:set_at] = moon_set.strftime(iso) unless moon_set.nil?
+  		moon_transit = Time.parse(date+" "+segments[6].strip[0..-4]+tz_offset) unless segments[6].strip == "NONE"
+      moon[:transit] = moon_transit.strftime(hmt) unless moon_transit.nil?
+      moon[:transit_at] = moon_transit.strftime(iso) unless moon_transit.nil?
+  		day_under_foot = Time.parse(date+" "+segments[8].strip[0..-4]+tz_offset) unless segments[8].strip == "NONE"
+      day[:under_foot] = day_under_foot.strftime(hmt) unless day_under_foot.nil?
+      day[:under_foot_at] = day_under_foot.strftime(iso) unless day_under_foot.nil?
+  		unless moon_rise.nil?
+  			minor_feed_times << { 
+          start: (moon_rise-45*60).strftime(hmt), 
+          start_at: (moon_rise-45*60).strftime(iso),
+          stop: (moon_rise+45*60).strftime(hmt),
+          stop_at: (moon_rise+45*60).strftime(iso)
+        }
   		end
-  		unless moon[:set].nil?
-  			minor_feed_times << { start: add_minutes(moon[:set],-45), stop: add_minutes(moon[:set],45) }
+  		unless moon_set.nil?
+        minor_feed_times << { 
+          start: (moon_set-45*60).strftime(hmt), 
+          start_at: (moon_set-45*60).strftime(iso),
+          stop: (moon_set+45*60).strftime(hmt),
+          stop_at: (moon_set+45*60).strftime(iso)
+        }
   		end
-  		unless moon[:rise].nil? || moon[:set].nil? || moon[:rise].split(":").first.to_i < moon[:set].split(":").first.to_i
+  		unless moon_rise.nil? || moon_set.nil? || moon_rise < moon_set
   			minor_feed_times.rotate!
   		end
-  		unless moon[:transit].nil?
-  			major_feed_times << { start: add_minutes(moon[:transit],-90), stop: add_minutes(moon[:transit],90) }
+  		unless moon_transit.nil?
+  			major_feed_times << { 
+          start: (moon_transit-90*60).strftime(hmt),
+          start_at: (moon_transit-90*60).strftime(iso),
+          stop: (moon_transit+90*60).strftime(hmt),
+          stop_at: (moon_transit+90*60).strftime(iso)
+        }
   		end
-  		unless day[:under_foot].nil?
-  			major_feed_times << { start: add_minutes(day[:under_foot],-90), stop: add_minutes(day[:under_foot],90) }
+  		unless day_under_foot.nil?
+  			major_feed_times << {
+          start: (day_under_foot-90*60).strftime(hmt),
+          start_at: (day_under_foot-90*60).strftime(iso),
+          stop: (day_under_foot+90*60).strftime(hmt),
+          stop_at: (day_under_foot+90*60).strftime(iso)
+        }
   		end
-  		unless moon[:transit].nil? || day[:under_foot].nil? || moon[:transit].split(":").first.to_i < day[:under_foot].split(":").first.to_i
+  		unless moon_transit.nil? || day_under_foot.nil? || moon_transit < day_under_foot
   			major_feed_times.rotate!
   		end
-  		day[:date] = segments[0].strip
+  		day[:date] = date
+      day[:timestamp] = Time.parse(date+" 00:00:00"+tz_offset).strftime(iso)
   		day[:moon_illumination] = segments[12].strip
   		day[:moon_phase] = segments[10].strip
   		day[:moon] = moon
@@ -62,41 +105,14 @@ class Solunar
   	forecast
   end
 
-  def add_hours(str,num)
-  	segs = str.split(":")
-  	hour = segs[0].to_i
-  	hour += num
-  	hour += 24 if hour < 0
-  	hour -= 24 if hour > 23
-  	if hour > 9
-  	  return "#{hour.to_s}:#{segs[1]}"
-  	else
-  	  return "0#{hour.to_s}:#{segs[1]}"
-  	end
-  end
-
-  def add_minutes(str,num)
-    segs = str.split(":")
-    hour = segs[0].to_i
-    minutes = segs[1].to_i
-    minutes += num
-    while(minutes > 59)
-      minutes -= 60
-      hour += 1
-    end
-    while(minutes < 0)
-      minutes += 60
-      hour -= 1
-    end
-    minutes = "0".to_s + minutes.to_s if minutes < 10
-    hour += 24 if hour < 0
-    hour -= 24 if hour > 23
-    if hour > 9
-      return "#{hour.to_s}:#{minutes.to_s}"
+  def double_digit(num)
+    if num > 9 || num < -9
+      return num.to_s
     else
-      return "0#{hour.to_s}:#{minutes.to_s}"
+      return "0#{num.abs.to_s}"
     end
   end
 
 end
+
 require 'solunar/solunar'
