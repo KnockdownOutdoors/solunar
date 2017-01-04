@@ -20,7 +20,6 @@ class Solunar
   	#Minor feed times are one hour after moon rise and moon set
   	res.split(";").each do |line|
   		next unless line.split(",").length > 7
-      puts line
   		segments = line.split(",")
       iso = "%Y-%m-%dT%H:%M%:z"
       hmt = "%H:%M"
